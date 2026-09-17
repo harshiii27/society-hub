@@ -1,0 +1,35 @@
+.register-page {
+  min-height: calc(100svh - 72px);
+  padding: 68px 20px 90px;
+  background:
+    radial-gradient(circle at 50% 10%, rgba(184, 92, 136, 0.07), transparent 26rem),
+    var(--bg);
+}
+
+.register-container {
+  width: min(480px, 100%);
+  margin: 0 auto;
+}
+
+.register-header {
+  margin-bottom: 24px;
+}
+
+.register-form {
+  padding: 28px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  background: var(--surface);
+  box-shadow: var(--shadow-md);
+}
+
+.register-field {
+  margin-bottom: 18px;
+}
+
+@media (max-width: 520px) {
+  .login-form,
+  .register-form {
+    padding: 22px;
+  }
+}
