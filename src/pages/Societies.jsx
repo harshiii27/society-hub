@@ -8,7 +8,7 @@ function Societies() {
   const [category, setCategory] = useState("All");
 
   useEffect(() => {
-    fetch("http://localhost:5000/api/societies")
+    fetch("https://society-hub-zsj4.onrender.com/api/societies")
       .then((response) => response.json())
       .then((data) => {
         setSocieties(data);

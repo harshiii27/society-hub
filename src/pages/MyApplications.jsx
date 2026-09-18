@@ -7,7 +7,7 @@ function MyApplications() {
   const [error, setError] = useState("");
 
   useEffect(() => {
-    fetch("http://localhost:5000/api/applications/my", {
+    fetch("https://society-hub-zsj4.onrender.com/api/applications/my", {
       headers: {
         Authorization: `Bearer ${localStorage.getItem("token")}`,
       },

@@ -7,7 +7,7 @@ function Home() {
   const [societyData, setSocietyData] = useState([]);
 
   useEffect(() => {
-    fetch("http://localhost:5000/api/societies")
+    fetch("https://society-hub-zsj4.onrender.com/api/societies")
       .then((response) => response.json())
       .then((data) => setSocietyData(data))
       .catch((error) => console.error("Failed to fetch societies:", error));

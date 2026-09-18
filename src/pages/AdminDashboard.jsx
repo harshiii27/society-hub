@@ -20,7 +20,7 @@ function AdminDashboard() {
         const token = localStorage.getItem("token");
 
         const applicationsResponse = await fetch(
-          "http://localhost:5000/api/admin/applications",
+          "https://society-hub-zsj4.onrender.com/api/admin/applications",
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -40,7 +40,7 @@ function AdminDashboard() {
         setApplications(applicationsData);
 
         const deadlineResponse = await fetch(
-          "http://localhost:5000/api/admin/deadline",
+          "https://society-hub-zsj4.onrender.com/api/admin/deadline",
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -86,7 +86,7 @@ function AdminDashboard() {
 
     try {
       const response = await fetch(
-        "http://localhost:5000/api/admin/deadline",
+        "https://society-hub-zsj4.onrender.com/api/admin/deadline",
         {
           method: "PUT",
           headers: {
@@ -135,7 +135,7 @@ function AdminDashboard() {
 
     try {
       const response = await fetch(
-        "http://localhost:5000/api/admin/questions",
+        "https://society-hub-zsj4.onrender.com/api/admin/questions",
         {
           method: "POST",
           headers: {
@@ -180,7 +180,7 @@ function AdminDashboard() {
   ) {
     try {
       const response = await fetch(
-        `http://localhost:5000/api/admin/applications/${applicationId}/status`,
+        `https://society-hub-zsj4.onrender.com/api/admin/applications/${applicationId}/status`,
         {
           method: "PUT",
           headers: {

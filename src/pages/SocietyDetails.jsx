@@ -12,7 +12,7 @@ function SocietyDetails() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch(`http://localhost:5000/api/societies/${id}`)
+    fetch(`https://society-hub-zsj4.onrender.com/api/societies/${id}`)
       .then((response) => response.json())
       .then((data) => {
         // data = the society details returned by the backend.

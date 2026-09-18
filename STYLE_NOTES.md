@@ -21,4 +21,4 @@ npm install
 npm run dev
 ```
 
-The frontend continues to expect the existing backend at `http://localhost:5000`.
+The frontend continues to expect the existing backend at `https://society-hub-zsj4.onrender.com`.

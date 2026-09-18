@@ -30,7 +30,7 @@ function Application() {
     async function fetchQuestions() {
       try {
         const response = await fetch(
-          `http://localhost:5000/api/societies/${societyId}/questions`,
+          `https://society-hub-zsj4.onrender.com/api/societies/${societyId}/questions`,
           {
             headers: {
               Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -90,7 +90,7 @@ function Application() {
       }));
 
       const response = await fetch(
-        "http://localhost:5000/api/applications",
+        "https://society-hub-zsj4.onrender.com/api/applications",
         {
           method: "POST",
           headers: {
