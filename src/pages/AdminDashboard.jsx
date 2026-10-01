@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react";
 import "./AdminDashboard.css";
 
@@ -28,7 +27,7 @@ function AdminDashboard() {
 
         // Fetch applications
         const applicationsResponse = await fetch(
-          "http://localhost:5000/api/admin/applications",
+          "https://society-hub-zsj4.onrender.com/api/admin/applications",
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -50,7 +49,7 @@ function AdminDashboard() {
 
         // Fetch analytics
         const analyticsResponse = await fetch(
-          "http://localhost:5000/api/admin/analytics",
+          "https://society-hub-zsj4.onrender.com/api/admin/analytics",
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -72,7 +71,7 @@ function AdminDashboard() {
 
         // Fetch deadline
         const deadlineResponse = await fetch(
-          "http://localhost:5000/api/admin/deadline",
+          "https://society-hub-zsj4.onrender.com/api/admin/deadline",
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -121,7 +120,7 @@ function AdminDashboard() {
 
     try {
       const response = await fetch(
-        "http://localhost:5000/api/admin/deadline",
+        "https://society-hub-zsj4.onrender.com/api/admin/deadline",
         {
           method: "PUT",
           headers: {
@@ -175,7 +174,7 @@ function AdminDashboard() {
 
     try {
       const response = await fetch(
-        "http://localhost:5000/api/admin/questions",
+        "https://society-hub-zsj4.onrender.com/api/admin/questions",
         {
           method: "POST",
           headers: {
@@ -224,7 +223,7 @@ function AdminDashboard() {
   ) {
     try {
       const response = await fetch(
-        `http://localhost:5000/api/admin/applications/${applicationId}/status`,
+        `https://society-hub-zsj4.onrender.com/api/admin/applications/${applicationId}/status`,
         {
           method: "PUT",
           headers: {
@@ -376,6 +375,7 @@ function AdminDashboard() {
 
       {/* DEADLINE */}
       <div className="deadline-section">
+
         <div>
           <p className="admin-label">
             RECRUITMENT DEADLINE
@@ -390,6 +390,7 @@ function AdminDashboard() {
         </div>
 
         <div className="deadline-controls">
+
           <input
             type="datetime-local"
             value={deadline}
@@ -407,6 +408,7 @@ function AdminDashboard() {
               ? "Updating..."
               : "Update Deadline"}
           </button>
+
         </div>
 
         {deadlineMessage && (
@@ -414,10 +416,12 @@ function AdminDashboard() {
             {deadlineMessage}
           </p>
         )}
+
       </div>
 
       {/* QUESTIONS */}
       <div className="questions-section">
+
         <div>
           <p className="admin-label">
             APPLICATION QUESTIONS
@@ -434,6 +438,7 @@ function AdminDashboard() {
         </div>
 
         <div className="question-controls">
+
           <textarea
             value={question}
             onChange={(event) =>
@@ -452,6 +457,7 @@ function AdminDashboard() {
               ? "Adding..."
               : "Add Question"}
           </button>
+
         </div>
 
         {questionMessage && (
@@ -459,10 +465,12 @@ function AdminDashboard() {
             {questionMessage}
           </p>
         )}
+
       </div>
 
       {/* APPLICATIONS */}
       {applications.length === 0 ? (
+
         <div className="empty-state">
           <h2>No applications yet</h2>
 
@@ -471,7 +479,9 @@ function AdminDashboard() {
             will appear here.
           </p>
         </div>
+
       ) : (
+
         <div className="applications-list">
 
           {applications.map((application) => (
@@ -488,7 +498,9 @@ function AdminDashboard() {
                     APPLICATION
                   </p>
 
-                  <h2>{application.name}</h2>
+                  <h2>
+                    {application.name}
+                  </h2>
                 </div>
 
                 <span
@@ -503,12 +515,16 @@ function AdminDashboard() {
 
                 <div>
                   <span>Roll Number</span>
-                  <p>{application.rollNumber}</p>
+                  <p>
+                    {application.rollNumber}
+                  </p>
                 </div>
 
                 <div>
                   <span>Email</span>
-                  <p>{application.email}</p>
+                  <p>
+                    {application.email}
+                  </p>
                 </div>
 
                 <div>
@@ -607,6 +623,7 @@ function AdminDashboard() {
           ))}
 
         </div>
+
       )}
 
     </main>
