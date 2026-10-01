@@ -11,11 +11,14 @@ function MyApplications() {
   useEffect(() => {
     const token = localStorage.getItem("token");
 
-    fetch("http://localhost:5000/api/applications/my", {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    })
+    fetch(
+      "https://society-hub-zsj4.onrender.com/api/applications/my",
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    )
       .then(async (response) => {
         const data = await response.json();
 
@@ -28,11 +31,16 @@ function MyApplications() {
         return data;
       })
       .then((data) => {
-        setApplications(Array.isArray(data) ? data : []);
+        setApplications(
+          Array.isArray(data) ? data : []
+        );
         setLoading(false);
       })
       .catch((error) => {
-        console.error("Failed to fetch applications:", error);
+        console.error(
+          "Failed to fetch applications:",
+          error
+        );
         setError(error.message);
         setLoading(false);
       });
@@ -40,7 +48,9 @@ function MyApplications() {
 
   // Socket.IO real-time updates
   useEffect(() => {
-    const socket = io("http://localhost:5000");
+    const socket = io(
+      "https://society-hub-zsj4.onrender.com"
+    );
 
     socket.on("connect", () => {
       console.log(
@@ -80,7 +90,9 @@ function MyApplications() {
     });
 
     socket.on("disconnect", () => {
-      console.log("Disconnected from Socket.IO");
+      console.log(
+        "Disconnected from Socket.IO"
+      );
     });
 
     return () => {
