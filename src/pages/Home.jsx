@@ -40,6 +40,18 @@ function Home() {
       <section className="hero">
         <div className="hero-glow hero-glow-one" />
         <div className="hero-glow hero-glow-two" />
+        <div className="pink-shapes hero-pink-shapes" aria-hidden="true">
+          <span className="pink-shape shape-orbit" />
+          <span className="pink-shape shape-petal" />
+          <span className="pink-shape shape-soft-disc" />
+          <span className="pink-shape shape-ribbon" />
+          <span className="pink-shape shape-petal hero-petal-two" />
+          <span className="pink-shape shape-soft-disc hero-disc-two" />
+          <span className="pink-shape shape-circle hero-circle-three" />
+          <span className="pink-shape shape-triangle hero-triangle-one" />
+          <span className="pink-shape shape-square hero-square-one" />
+          <span className="pink-shape shape-rectangle hero-rectangle-one" />
+        </div>
         <div className="hero-content">
           <p className="hero-label hero-enter hero-enter-1">NSUT SOCIETY RECRUITMENT</p>
 
@@ -78,6 +90,15 @@ function Home() {
       </section>
 
       <section className="featured home-section reveal" id="featured">
+        <div className="pink-shapes section-pink-shapes featured-pink-shapes" aria-hidden="true">
+          <span className="pink-shape shape-orbit" />
+          <span className="pink-shape shape-petal" />
+          <span className="pink-shape shape-soft-disc" />
+          <span className="pink-shape shape-triangle section-triangle" />
+          <span className="pink-shape shape-square section-square" />
+          <span className="pink-shape shape-rectangle featured-rectangle-one" />
+          <span className="pink-shape shape-rectangle featured-rectangle-two" />
+        </div>
         <div className="section-heading">
           <div>
             <p className="section-label">DISCOVER</p>
@@ -118,6 +139,13 @@ function Home() {
       </section>
 
       <section className="home-statement reveal">
+        <div className="pink-shapes section-pink-shapes statement-pink-shapes" aria-hidden="true">
+          <span className="pink-shape shape-ribbon" />
+          <span className="pink-shape shape-petal" />
+          <span className="pink-shape shape-soft-disc" />
+          <span className="pink-shape shape-triangle section-triangle" />
+          <span className="pink-shape shape-square section-square" />
+        </div>
         <div className="statement-number">01</div>
         <div>
           <p className="section-label">WHY SOCIETY HUB</p>

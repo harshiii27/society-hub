@@ -461,3 +461,103 @@
 h1 span{
   font-family:fangsons;
 }
+
+/* Decorative pink forms: grouped per section and animated with the page's reveal rhythm. */
+.hero, .featured, .home-statement, .home-cta { position: relative; }
+.hero { isolation: isolate; }
+.pink-shapes {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+  contain: paint;
+}
+.pink-shape {
+  position: absolute;
+  display: block;
+  opacity: 0;
+  background: linear-gradient(135deg, rgba(238, 174, 201, .19), rgba(220, 151, 183, .12));
+  border: 1px solid rgba(229, 170, 197, .14);
+  filter: blur(.1px);
+  will-change: opacity, translate;
+}
+.shape-orbit { width: clamp(190px, 28vw, 390px); aspect-ratio: 1; border-radius: 44% 56% 63% 37% / 48% 38% 62% 52%; }
+.shape-petal { width: clamp(130px, 19vw, 260px); aspect-ratio: 1.3; border-radius: 70% 30% 58% 42% / 42% 54% 46% 58%; }
+.shape-soft-disc, .shape-circle { width: clamp(120px, 18vw, 250px); aspect-ratio: 1; border-radius: 50%; }
+.shape-soft-disc { background: radial-gradient(circle, rgba(238, 174, 201, .17), rgba(220, 151, 183, .10) 72%, transparent 80%); border: 0; }
+.shape-ribbon, .shape-rectangle { width: clamp(170px, 25vw, 340px); height: clamp(65px, 9vw, 120px); border-radius: 28px; }
+.shape-ribbon { width: clamp(220px, 34vw, 470px); height: clamp(90px, 14vw, 180px); border-radius: 999px; background: linear-gradient(90deg, rgba(238,174,201,.11), rgba(238,174,201,.18), rgba(220,151,183,.10)); }
+.shape-square { width: clamp(70px, 10vw, 145px); aspect-ratio: 1; border-radius: 22px; }
+.shape-triangle { width: clamp(90px, 13vw, 175px); aspect-ratio: 1; border: 0; background: rgba(229, 161, 191, .16); clip-path: polygon(50% 0, 100% 100%, 0 100%); }
+.hero-pink-shapes .shape-orbit { top: 3%; left: 1%; transform: rotate(-22deg) scale(.82); }
+.hero-pink-shapes .shape-petal { right: 1%; top: 10%; transform: rotate(24deg) scale(.78); }
+.hero-pink-shapes .shape-soft-disc { left: 7%; bottom: 1%; transform: scale(.72); }
+.hero-pink-shapes .shape-ribbon { right: -19%; bottom: 1%; transform: rotate(-28deg) scale(.8); }
+.hero-pink-shapes .hero-petal-two { left: -3%; top: 52%; transform: rotate(-18deg) scale(.58); }
+.hero-pink-shapes .hero-disc-two { right: -1%; top: 53%; transform: scale(.52); }
+.hero-pink-shapes .hero-circle-three { right: 27%; top: 5%; transform: scale(.34); }
+.hero-pink-shapes .hero-triangle-one { left: 31%; top: 18%; transform: rotate(18deg) scale(.55); }
+.hero-pink-shapes .hero-square-one { right: 20%; bottom: 13%; transform: rotate(18deg) scale(.55); }
+.hero-pink-shapes .hero-rectangle-one { left: 12%; top: 38%; transform: rotate(-24deg) scale(.5); }
+
+/* The hero animates on page load, independently of scroll observers. */
+.hero-pink-shapes .pink-shape {
+  animation: pinkShapeLoad 700ms cubic-bezier(.22, 1, .36, 1) both;
+}
+.hero-pink-shapes .pink-shape:nth-child(1) { --shape-from-x: -58px; --shape-from-y: 10px; animation-delay: 80ms; }
+.hero-pink-shapes .pink-shape:nth-child(2) { --shape-from-x: 54px; --shape-from-y: -16px; animation-delay: 150ms; }
+.hero-pink-shapes .pink-shape:nth-child(3) { --shape-from-x: -22px; --shape-from-y: 42px; animation-delay: 230ms; }
+.hero-pink-shapes .pink-shape:nth-child(4) { --shape-from-x: 60px; --shape-from-y: 20px; animation-delay: 310ms; }
+.hero-pink-shapes .pink-shape:nth-child(5) { --shape-from-x: -48px; --shape-from-y: 12px; animation-delay: 150ms; }
+.hero-pink-shapes .pink-shape:nth-child(6) { --shape-from-x: 42px; --shape-from-y: 28px; animation-delay: 230ms; }
+.hero-pink-shapes .pink-shape:nth-child(7) { --shape-from-x: 44px; --shape-from-y: -20px; animation-delay: 180ms; }
+.hero-pink-shapes .pink-shape:nth-child(8) { --shape-from-x: -38px; --shape-from-y: -28px; animation-delay: 260ms; }
+.hero-pink-shapes .pink-shape:nth-child(9) { --shape-from-x: 36px; --shape-from-y: 32px; animation-delay: 330ms; }
+.hero-pink-shapes .pink-shape:nth-child(10) { --shape-from-x: -42px; --shape-from-y: 18px; animation-delay: 390ms; }
+@keyframes pinkShapeLoad {
+  from { opacity: 0; translate: var(--shape-from-x, 0) var(--shape-from-y, 0); }
+  to { opacity: 1; translate: 0 0; }
+}
+.section-pink-shapes { z-index: 0; }
+.section-pink-shapes .pink-shape {
+  transition: opacity 700ms cubic-bezier(.22, 1, .36, 1), translate 700ms cubic-bezier(.22, 1, .36, 1);
+}
+.section-pink-shapes .shape-orbit { top: 8%; right: -9%; transform: rotate(18deg) scale(.82); translate: 38px -16px; }
+.section-pink-shapes .shape-petal { left: -7%; bottom: 12%; transform: rotate(-24deg) scale(.8); translate: -34px 20px; }
+.section-pink-shapes .shape-soft-disc { right: 26%; bottom: -15%; transform: scale(.75); translate: 0 24px; }
+.section-pink-shapes .shape-ribbon { right: -10%; top: 22%; transform: rotate(-28deg) scale(.8); translate: 30px 0; }
+.section-pink-shapes .section-triangle { right: 18%; top: 12%; transform: rotate(20deg) scale(.55); translate: 24px -18px; }
+.section-pink-shapes .section-square { left: 20%; bottom: 4%; transform: rotate(-14deg) scale(.48); translate: -20px 24px; }
+.featured-pink-shapes .featured-rectangle-one { left: 5%; top: 24%; transform: rotate(-26deg) scale(.42); translate: -28px 18px; }
+.featured-pink-shapes .featured-rectangle-two { right: 8%; bottom: 8%; transform: rotate(22deg) scale(.36); translate: 28px 20px; }
+.featured-pink-shapes .featured-rectangle-two { transition-delay: 90ms; }
+.reveal.is-visible .section-pink-shapes .pink-shape { opacity: 1; translate: 0 0; }
+.featured > :not(.pink-shapes), .home-statement > :not(.pink-shapes), .home-cta > :not(.pink-shapes) { position: relative; z-index: 1; }
+/* Keep the final call-to-action deliberately clear of decorative forms. */
+.home-cta { isolation: isolate; }
+@media (max-width: 850px) {
+  .hero-pink-shapes .shape-orbit { left: -10%; top: 3%; }
+  .hero-pink-shapes .shape-petal { right: -10%; top: 12%; }
+  .hero-pink-shapes .hero-petal-two { left: -12%; top: 52%; }
+  .hero-pink-shapes .hero-disc-two { right: -2%; top: 54%; }
+}
+@media (max-width: 620px) {
+  .hero-pink-shapes .shape-orbit { left: -38%; top: 2%; transform: rotate(-22deg) scale(.62); }
+  .hero-pink-shapes .shape-petal { right: -42%; top: 10%; transform: rotate(24deg) scale(.58); }
+  .hero-pink-shapes .shape-soft-disc { left: -16%; bottom: 2%; transform: scale(.48); }
+  .hero-pink-shapes .shape-ribbon { right: -58%; bottom: 1%; transform: rotate(-28deg) scale(.52); }
+  .hero-pink-shapes .hero-petal-two { left: -38%; top: 48%; transform: rotate(-18deg) scale(.38); }
+  .hero-pink-shapes .hero-disc-two { right: -16%; top: 50%; transform: scale(.36); }
+  .hero-pink-shapes .hero-triangle-one { left: 20%; top: 22%; transform: rotate(18deg) scale(.34); }
+  .hero-pink-shapes .hero-square-one { right: 6%; bottom: 20%; transform: rotate(18deg) scale(.34); }
+  .hero-pink-shapes .hero-rectangle-one { left: 2%; top: 42%; transform: rotate(-24deg) scale(.32); }
+  .hero-pink-shapes .hero-circle-three { right: 4%; top: 2%; transform: scale(.25); }
+  .section-pink-shapes .shape-soft-disc { right: -10%; }
+  .section-pink-shapes .shape-ribbon { right: -55%; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .hero-pink-shapes .pink-shape { animation: none; opacity: 1; translate: 0 0; }
+  .section-pink-shapes .pink-shape { transition: none; opacity: 1; translate: 0 0; }
+}
+
