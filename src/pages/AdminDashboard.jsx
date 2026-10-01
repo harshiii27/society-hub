@@ -14,13 +14,21 @@ function AdminDashboard() {
   const [questionMessage, setQuestionMessage] = useState("");
   const [addingQuestion, setAddingQuestion] = useState(false);
 
+  const [analytics, setAnalytics] = useState({
+    total: 0,
+    pending: 0,
+    accepted: 0,
+    rejected: 0,
+  });
+
   useEffect(() => {
     async function fetchAdminData() {
       try {
         const token = localStorage.getItem("token");
 
+        // Fetch applications
         const applicationsResponse = await fetch(
-          "https://society-hub-zsj4.onrender.com/api/admin/applications",
+          "http://localhost:5000/api/admin/applications",
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -28,7 +36,8 @@ function AdminDashboard() {
           }
         );
 
-        const applicationsData = await applicationsResponse.json();
+        const applicationsData =
+          await applicationsResponse.json();
 
         if (!applicationsResponse.ok) {
           throw new Error(
@@ -39,8 +48,9 @@ function AdminDashboard() {
 
         setApplications(applicationsData);
 
-        const deadlineResponse = await fetch(
-          "https://society-hub-zsj4.onrender.com/api/admin/deadline",
+        // Fetch analytics
+        const analyticsResponse = await fetch(
+          "http://localhost:5000/api/admin/analytics",
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -48,7 +58,30 @@ function AdminDashboard() {
           }
         );
 
-        const deadlineData = await deadlineResponse.json();
+        const analyticsData =
+          await analyticsResponse.json();
+
+        if (!analyticsResponse.ok) {
+          throw new Error(
+            analyticsData.message ||
+              "Failed to fetch analytics"
+          );
+        }
+
+        setAnalytics(analyticsData);
+
+        // Fetch deadline
+        const deadlineResponse = await fetch(
+          "http://localhost:5000/api/admin/deadline",
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+
+        const deadlineData =
+          await deadlineResponse.json();
 
         if (!deadlineResponse.ok) {
           throw new Error(
@@ -77,7 +110,9 @@ function AdminDashboard() {
 
   async function updateDeadline() {
     if (!deadline) {
-      setDeadlineMessage("Please enter a valid deadline.");
+      setDeadlineMessage(
+        "Please enter a valid deadline."
+      );
       return;
     }
 
@@ -86,12 +121,14 @@ function AdminDashboard() {
 
     try {
       const response = await fetch(
-        "https://society-hub-zsj4.onrender.com/api/admin/deadline",
+        "http://localhost:5000/api/admin/deadline",
         {
           method: "PUT",
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
+            Authorization: `Bearer ${localStorage.getItem(
+              "token"
+            )}`,
           },
           body: JSON.stringify({
             deadline: deadline,
@@ -103,7 +140,8 @@ function AdminDashboard() {
 
       if (!response.ok) {
         throw new Error(
-          data.message || "Failed to update deadline"
+          data.message ||
+            "Failed to update deadline"
         );
       }
 
@@ -126,7 +164,9 @@ function AdminDashboard() {
 
   async function addQuestion() {
     if (!question.trim()) {
-      setQuestionMessage("Please enter a question.");
+      setQuestionMessage(
+        "Please enter a question."
+      );
       return;
     }
 
@@ -135,12 +175,14 @@ function AdminDashboard() {
 
     try {
       const response = await fetch(
-        "https://society-hub-zsj4.onrender.com/api/admin/questions",
+        "http://localhost:5000/api/admin/questions",
         {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
+            Authorization: `Bearer ${localStorage.getItem(
+              "token"
+            )}`,
           },
           body: JSON.stringify({
             question: question.trim(),
@@ -152,11 +194,13 @@ function AdminDashboard() {
 
       if (!response.ok) {
         throw new Error(
-          data.message || "Failed to add question"
+          data.message ||
+            "Failed to add question"
         );
       }
 
       setQuestion("");
+
       setQuestionMessage(
         "Question added successfully."
       );
@@ -180,12 +224,14 @@ function AdminDashboard() {
   ) {
     try {
       const response = await fetch(
-        `https://society-hub-zsj4.onrender.com/api/admin/applications/${applicationId}/status`,
+        `http://localhost:5000/api/admin/applications/${applicationId}/status`,
         {
           method: "PUT",
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
+            Authorization: `Bearer ${localStorage.getItem(
+              "token"
+            )}`,
           },
           body: JSON.stringify({
             status: status,
@@ -193,9 +239,9 @@ function AdminDashboard() {
         }
       );
 
-      if (!response.ok) {
-        const data = await response.json();
+      const data = await response.json();
 
+      if (!response.ok) {
         throw new Error(
           data.message ||
             "Failed to update application status"
@@ -212,6 +258,39 @@ function AdminDashboard() {
             : application
         )
       );
+
+      // Update analytics instantly
+      setAnalytics((prevAnalytics) => {
+        const application =
+          applications.find(
+            (item) => item.id === applicationId
+          );
+
+        if (!application) {
+          return prevAnalytics;
+        }
+
+        const oldStatus = application.status;
+
+        if (oldStatus === status) {
+          return prevAnalytics;
+        }
+
+        return {
+          ...prevAnalytics,
+          [oldStatus.toLowerCase()]:
+            Math.max(
+              0,
+              prevAnalytics[
+                oldStatus.toLowerCase()
+              ] - 1
+            ),
+          [status.toLowerCase()]:
+            prevAnalytics[
+              status.toLowerCase()
+            ] + 1,
+        };
+      });
     } catch (error) {
       console.error(
         "Failed to update application status:",
@@ -230,6 +309,8 @@ function AdminDashboard() {
 
   return (
     <main className="admin-page">
+
+      {/* ADMIN HEADER */}
       <div className="admin-header">
         <div>
           <p className="admin-label">
@@ -242,13 +323,58 @@ function AdminDashboard() {
             Manage applications for your society.
           </p>
         </div>
+      </div>
 
-        <div className="application-count">
-          <span>{applications.length}</span>
-          <p>Applications</p>
+      {/* ANALYTICS */}
+      <div className="analytics-section">
+
+        <div className="analytics-heading">
+          <p className="admin-label">
+            APPLICATION ANALYTICS
+          </p>
+
+          <h2>Application Overview</h2>
+
+          <p className="analytics-description">
+            A quick look at the applications received
+            by your society.
+          </p>
+        </div>
+
+        <div className="analytics-circles">
+
+          <div className="analytics-circle total-circle">
+            <div className="circle-content">
+              <strong>{analytics.total}</strong>
+              <span>Total</span>
+            </div>
+          </div>
+
+          <div className="analytics-circle pending-circle">
+            <div className="circle-content">
+              <strong>{analytics.pending}</strong>
+              <span>Pending</span>
+            </div>
+          </div>
+
+          <div className="analytics-circle accepted-circle">
+            <div className="circle-content">
+              <strong>{analytics.accepted}</strong>
+              <span>Accepted</span>
+            </div>
+          </div>
+
+          <div className="analytics-circle rejected-circle">
+            <div className="circle-content">
+              <strong>{analytics.rejected}</strong>
+              <span>Rejected</span>
+            </div>
+          </div>
+
         </div>
       </div>
 
+      {/* DEADLINE */}
       <div className="deadline-section">
         <div>
           <p className="admin-label">
@@ -258,8 +384,8 @@ function AdminDashboard() {
           <h2>Set application deadline</h2>
 
           <p className="deadline-description">
-            Applications will automatically close after
-            this date and time.
+            Applications will automatically close
+            after this date and time.
           </p>
         </div>
 
@@ -290,17 +416,20 @@ function AdminDashboard() {
         )}
       </div>
 
+      {/* QUESTIONS */}
       <div className="questions-section">
         <div>
           <p className="admin-label">
             APPLICATION QUESTIONS
           </p>
 
-          <h2>Add a question for applicants</h2>
+          <h2>
+            Add a question for applicants
+          </h2>
 
           <p className="questions-description">
-            Add a custom question that students must answer
-            when applying to your society.
+            Add a custom question that students
+            must answer when applying to your society.
           </p>
         </div>
 
@@ -332,23 +461,28 @@ function AdminDashboard() {
         )}
       </div>
 
+      {/* APPLICATIONS */}
       {applications.length === 0 ? (
         <div className="empty-state">
           <h2>No applications yet</h2>
 
           <p>
-            Applications submitted to your society will
-            appear here.
+            Applications submitted to your society
+            will appear here.
           </p>
         </div>
       ) : (
         <div className="applications-list">
+
           {applications.map((application) => (
+
             <div
               className="application-card"
               key={application.id}
             >
+
               <div className="application-top">
+
                 <div>
                   <p className="application-label">
                     APPLICATION
@@ -362,9 +496,11 @@ function AdminDashboard() {
                 >
                   {application.status}
                 </span>
+
               </div>
 
               <div className="student-info">
+
                 <div>
                   <span>Roll Number</span>
                   <p>{application.rollNumber}</p>
@@ -377,34 +513,47 @@ function AdminDashboard() {
 
                 <div>
                   <span>Applied</span>
+
                   <p>
                     {new Date(
                       application.createdAt
                     ).toLocaleDateString()}
                   </p>
                 </div>
+
               </div>
 
               <div className="reason-section">
-                <span>Why they want to join</span>
 
-                <p>{application.reason}</p>
+                <span>
+                  Why they want to join
+                </span>
+
+                <p>
+                  {application.reason}
+                </p>
+
               </div>
 
               {application.answers &&
                 application.answers.length > 0 && (
+
                   <div className="answers-section">
+
                     <span className="answers-title">
                       Application Questions and Answers
                     </span>
 
                     <div className="answers-list">
+
                       {application.answers.map(
                         (item, index) => (
+
                           <div
                             key={index}
                             className="answer-item"
                           >
+
                             <p className="answerquestion">
                               {item.question}
                             </p>
@@ -413,14 +562,20 @@ function AdminDashboard() {
                               {item.answer ||
                                 "No answer provided."}
                             </p>
+
                           </div>
+
                         )
                       )}
+
                     </div>
+
                   </div>
+
                 )}
 
               <div className="application-actions">
+
                 <button
                   className="accept-btn"
                   onClick={() =>
@@ -444,11 +599,16 @@ function AdminDashboard() {
                 >
                   Reject
                 </button>
+
               </div>
+
             </div>
+
           ))}
+
         </div>
       )}
+
     </main>
   );
 }

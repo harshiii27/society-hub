@@ -4,9 +4,31 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const mysql = require("mysql2");
 const dotenv = require("dotenv");
+const http = require("http");
+
+
+const { Resend } = require("resend");
+const { Server } = require("socket.io");
 
 dotenv.config();
+
+const resend = new Resend(process.env.RESEND_API_KEY);
 const app = express();
+const server = http.createServer(app);
+
+const io = new Server(server, {
+  cors: {
+    origin: "*",
+  },
+});
+
+io.on("connection", (socket) => {
+  console.log("A user connected:", socket.id);
+
+  socket.on("disconnect", () => {
+    console.log("A user disconnected:", socket.id);
+  });
+});
 
 app.use(cors());
 app.use(express.json());
@@ -381,6 +403,54 @@ app.get(
   }
 );
 
+app.get(
+  "/api/admin/analytics",
+  authenticateToken,
+  requireAdmin,
+  async (req, res) => {
+    try {
+      const [admins] = await db.promise().query(
+        `SELECT societyId
+         FROM students
+         WHERE id = ? AND role = 'admin'`,
+        [req.user.id]
+      );
+
+      if (admins.length === 0 || admins[0].societyId == null) {
+        return res.status(403).json({
+          message: "Admin is not assigned to a society.",
+        });
+      }
+
+      const societyId = admins[0].societyId;
+
+      const [stats] = await db.promise().query(
+        `SELECT
+          COUNT(*) AS total,
+          SUM(status = 'Pending') AS pending,
+          SUM(status = 'Accepted') AS accepted,
+          SUM(status = 'Rejected') AS rejected
+         FROM applications
+         WHERE societyId = ?`,
+        [societyId]
+      );
+
+      res.json({
+        total: Number(stats[0].total),
+        pending: Number(stats[0].pending),
+        accepted: Number(stats[0].accepted),
+        rejected: Number(stats[0].rejected),
+      });
+    } catch (error) {
+      console.error("Analytics error:", error);
+
+      res.status(500).json({
+        message: "Failed to fetch analytics",
+      });
+    }
+  }
+);
+
 app.put(
   "/api/admin/applications/:id/status",
   authenticateToken,
@@ -400,7 +470,6 @@ app.put(
     }
 
     try {
-      // Find which society this admin manages
       const [admins] = await db.promise().query(
         `SELECT societyId
          FROM students
@@ -416,7 +485,27 @@ app.put(
 
       const societyId = admins[0].societyId;
 
-      // Update only if the application belongs to this society
+      const [applications] = await db.promise().query(
+        `SELECT
+           a.id,
+           s.name AS studentName,
+           s.email AS studentEmail,
+           so.name AS societyName
+         FROM applications a
+         JOIN students s ON a.studentId = s.id
+         JOIN societies so ON a.societyId = so.id
+         WHERE a.id = ? AND a.societyId = ?`,
+        [applicationId, societyId]
+      );
+
+      if (applications.length === 0) {
+        return res.status(404).json({
+          message: "Application not found for your society.",
+        });
+      }
+
+      const application = applications[0];
+
       const [result] = await db.promise().query(
         `UPDATE applications
          SET status = ?
@@ -430,11 +519,87 @@ app.put(
         });
       }
 
+      console.log("Emitting status update:", {
+        applicationId: Number(applicationId),
+        status,
+      });
+
+      io.emit("applicationStatusUpdated", {
+        applicationId: Number(applicationId),
+        status,
+      });
+
+      try {
+        const emailSubject =
+          status === "Accepted"
+            ? `Society Hub — Your ${application.societyName} application was accepted`
+            : status === "Rejected"
+            ? `Society Hub — Update on your ${application.societyName} application`
+            : `Society Hub — Application status update`;
+
+        const emailMessage =
+          status === "Accepted"
+            ? `
+              <h2>Application Accepted 🎉</h2>
+              <p>Hi ${application.studentName},</p>
+              <p>
+                Your application to <strong>${application.societyName}</strong>
+                has been <strong>accepted</strong>.
+              </p>
+              <p>Congratulations! 🎉</p>
+              <p>— Society Hub</p>
+            `
+            : status === "Rejected"
+            ? `
+              <h2>Application Update</h2>
+              <p>Hi ${application.studentName},</p>
+              <p>
+                Your application to <strong>${application.societyName}</strong>
+                has been <strong>rejected</strong>.
+              </p>
+              <p>Thank you for applying.</p>
+              <p>— Society Hub</p>
+            `
+            : `
+              <h2>Application Status Updated</h2>
+              <p>Hi ${application.studentName},</p>
+              <p>
+                Your application to <strong>${application.societyName}</strong>
+                is currently <strong>Pending</strong>.
+              </p>
+              <p>— Society Hub</p>
+            `;
+
+        const { data, error } = await resend.emails.send({
+          from: "Society Hub <onboarding@resend.dev>",
+          to: [application.studentEmail],
+          subject: emailSubject,
+          html: emailMessage,
+        });
+
+        if (error) {
+          console.error("Email sending failed:", error);
+        } else {
+          console.log(
+            "Status email sent successfully:",
+            data
+          );
+        }
+      } catch (emailError) {
+        console.error(
+          "Email service error:",
+          emailError
+        );
+      }
+
       res.json({
         message: "Application status updated successfully.",
       });
     } catch (error) {
-      console.error("Failed to update application status:", error);
+      console.error(
+        "Failed to update application status:",
+        error
+      );
 
       res.status(500).json({
         message: "Failed to update application status",
@@ -780,7 +945,7 @@ app.get(
   }
 );
 
-app.listen(PORT, () => {
+server.listen(PORT, () => {
   console.log(
     `Server running on http://localhost:${PORT}`
   );
